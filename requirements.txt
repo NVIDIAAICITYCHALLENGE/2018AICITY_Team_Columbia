@@ -1,0 +1,9 @@
+tensorflow~=1.7
+opencv-python
+imageio
+numpy
+keras
+scikit-learn
+tqdm
+scipy
+matplotlib
