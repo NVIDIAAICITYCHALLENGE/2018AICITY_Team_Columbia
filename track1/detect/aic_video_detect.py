@@ -8,9 +8,9 @@ import imageio
 import cv2
 import tqdm
 import pickle
+import argparse
 
 from config import Config
-# import coco
 import utils
 import model as modellib
 
@@ -21,20 +21,17 @@ def mask_to_contours(mask):
     # return a list of contours
     return contours
 
-def main():
-    # Root directory of the project
-    ROOT_DIR = "../model/maskrcnn/"
+def main(model_path, input_video, output_dir):
 
     # Directory to save logs and trained model
-    MODEL_DIR = os.path.join(ROOT_DIR, "logs")
+    MODEL_DIR = "./logs"
 
     # Local path to trained weights file
-    COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
-    # Download COCO trained weights from Releases if needed
-    if not os.path.exists(COCO_MODEL_PATH):
-        utils.download_trained_weights(COCO_MODEL_PATH)
+    COCO_MODEL_PATH = model_path
 
     class InferenceConfig(Config):
+        NAME = "aic"
+        NUM_CLASSES = 80 + 1
         # Set batch size to 1 since we'll be running inference on
         # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
         GPU_COUNT = 1
@@ -70,8 +67,8 @@ def main():
                    'teddy bear', 'hair drier', 'toothbrush']
     
     # read video
-    video_dir = "../data/track1_videos/"
-    save_dir = "../data/detect_output_pkl/"
+    video_dir = input_video#"../data/track1_videos/"
+    save_dir = output_dir#"../data/detect_output_pkl/"
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)
     
@@ -115,7 +112,27 @@ def main():
                 
                 pbar.update(1)
         pbar.close()
-                
     
+
+def parse_args():
+    """ Parse command line arguments.
+    """
+    parser = argparse.ArgumentParser(description="Mask RCNN Detection")
+    parser.add_argument(
+        "--model_path", help="Path to the pretrained model",
+        default="../model/maskrcnn/mask_rcnn_coco.h5")
+    parser.add_argument(
+        "--input_video", help="Path to track1 videos.", 
+        default="../data/track1_videos/",)
+    parser.add_argument(
+        "--output_dir", help="Path to the detection output file.",
+        default="../data/detect_output_pkl/")
+    return parser.parse_args()            
+    
+
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+    model_path = args.model_path
+    input_video = args.input_video
+    output_dir = args.output_dir
+    main(model_path=model_path, input_video=input_video, output_dir=output_dir)

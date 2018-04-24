@@ -4,15 +4,13 @@ import time
 import random
 import math
 import numpy as np
-#import skimage.io
 import imageio
 import cv2
 import tqdm
 import pickle
+import argparse
 
-#import visualize
-
-def main():
+def main(video_dir, detection_file, output_dir):
     # COCO Class names
     # Index of the class in the list is its ID. For example, to get ID of
     # the teddy bear class, use: class_names.index('teddy bear')
@@ -33,9 +31,9 @@ def main():
                    'teddy bear', 'hair drier', 'toothbrush']
     
     # video directory
-    video_dir = "../../../../detrac/data/Insight-MVT_Annotation_Train"
-    detect_dir = "../../../../detrac/data/train_detect_output"
-    save_dir = "../../../../detrac/data/train_detect_txt"
+    video_dir = video_dir
+    detect_dir = detection_file
+    save_dir = output_dir
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)
     # set upper and lower bound of visualizd frames
@@ -43,7 +41,7 @@ def main():
     ub_init = 18000
     assert ub_init>lb_init, "upper bound < lower bound"
 
-    videonames = [x for x in os.listdir(video_dir) if x.startswith("MVI")]
+    videonames = [x for x in os.listdir(video_dir) if x.startswith("Loc")]
     for videoname in videonames:
         print("Processing video {}...".format(videoname))
         # load pkl files
@@ -75,7 +73,26 @@ def main():
             pbar.update(1)
         f.close()  
         pbar.close()
+
+
+def parse_args():
+    """ Parse command line arguments.
+    """
+    parser = argparse.ArgumentParser(description="Pickle To TXT for tracking")
+    parser.add_argument(
+        "--video_dir", help="Path to AIC track1 videos",
+        default="../data/track1_videos/")
+    parser.add_argument(
+        "--detection_file", help="Path to saved pickle detection files.", 
+        default="../data/detect_output_pkl/")
+    parser.add_argument(
+        "--output_dir", help="Path to output txt.", default="../data/detect_output_txt")
+    return parser.parse_args()
             
             
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+    video_dir = args.video_dir
+    detection_file = args.detection_file
+    output_dir = args.output_dir
+    main(video_dir=video_dir, detection_file=detection_file, output_dir=output_dir)
