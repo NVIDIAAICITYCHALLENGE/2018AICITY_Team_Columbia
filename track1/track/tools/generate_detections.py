@@ -168,7 +168,7 @@ def generate_detections(encoder, mot_dir, output_dir, detection_dir=None):
             #    int(os.path.splitext(f)[0].split('_')[2]): os.path.join(image_dir, f)
             #    for f in os.listdir(image_dir)}
             image_filenames = {
-                int(os.path.splitext(f)[0].split('g')[1]): os.path.join(image_dir, f)
+                int(os.path.splitext(f)[0].split('_')[-1]): os.path.join(image_dir, f)
                 for f in os.listdir(image_dir)}
     
             detection_file = os.path.join(
@@ -204,18 +204,18 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Re-ID feature extractor")
     parser.add_argument(
         "--model",
-        default="resources/networks/mars-small128.pb",
+        default="../model/cosine/detrac.pb",
         help="Path to freezed inference graph protobuf.")
     parser.add_argument(
-        "--mot_dir", help="Path to MOTChallenge directory (train or test)",
-        required=True)
+        "--mot_dir", help="Path to  detection result directory",
+        default="../data/Nvidia")
     parser.add_argument(
         "--detection_dir", help="Path to custom detections. Defaults to "
-        "standard MOT detections Directory structure should be the default "
-        "MOTChallenge structure: [sequence]/det/det.txt", default=None)
+        "standard detections Directory structure should be the default "
+        "Nvidia structure: [sequence]/det/det.txt", default=None)
     parser.add_argument(
         "--output_dir", help="Output directory. Will be created if it does not"
-        " exist.", default="detections")
+        " exist.", default="../data/track_features")
     return parser.parse_args()
 
 

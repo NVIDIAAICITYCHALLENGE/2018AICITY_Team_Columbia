@@ -183,11 +183,11 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Freeze old model")
     parser.add_argument(
         "--checkpoint_in",
-        default="resources/networks/mars-small128.ckpt-68577",
+        default="../model/cosine/detrac.ckpt",
         help="Path to checkpoint file")
     parser.add_argument(
         "--graphdef_out",
-        default="resources/networks/mars-small128.pb")
+        default="../model/cosine/detrac.pb")
     return parser.parse_args()
 
 

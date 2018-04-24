@@ -47,7 +47,10 @@ def main(video_dir, detection_file, output_dir):
         # load pkl files
         pkl_dir = os.path.join(detect_dir, videoname)
         pkl_files = sorted([f for f in os.listdir(pkl_dir) if f.endswith(".pkl")])
-        f = open(os.path.join(save_dir, videoname.split(".")[0]+"_det.txt"), "w+")
+        det_dir = os.path.join(save_dir, videoname.split(".")[0],"det")
+        if not os.path.exists(det_dir):
+            os.makedirs(det_dir)
+        f = open(os.path.join(det_dir,videoname.split(".")[0]+"_det.txt"), "w+")
         ub = min(ub_init, len(pkl_files)-1)
         lb = max(lb_init, 0) 
         pbar = tqdm.tqdm(total = ub-lb+1)
@@ -86,7 +89,7 @@ def parse_args():
         "--detection_file", help="Path to saved pickle detection files.", 
         default="../data/detect_output_pkl/")
     parser.add_argument(
-        "--output_dir", help="Path to output txt.", default="../data/detect_output_txt")
+        "--output_dir", help="Path to output txt.", default="../data/Nvidia")
     return parser.parse_args()
             
             

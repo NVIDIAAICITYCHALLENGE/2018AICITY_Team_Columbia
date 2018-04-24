@@ -62,10 +62,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Video2Frame")
     parser.add_argument(
         "--vedio_dir", help="Path the videos",
-        default='./track1_videos')
+        default='../data/track1_videos')
     parser.add_argument(
         "--save_path", help="Path to save the images.", 
-        default='./Nvidia')
+        default='../data/Nvidia')
     args = parser.parse_args()
     main(args.vedio_dir,args.save_path)
     

@@ -45,7 +45,7 @@ def gather_sequence_info(sequence_dir, detection_file):
     """
     image_dir = os.path.join(sequence_dir, "img1")
     image_filenames = {
-        int(os.path.splitext(f)[0].split('g')[-1]): os.path.join(image_dir, f)
+        int(os.path.splitext(f)[0].split('_')[-1]): os.path.join(image_dir, f)
         for f in os.listdir(image_dir)}
     groundtruth_file = os.path.join(sequence_dir, "gt/gt.txt")
 
@@ -226,15 +226,14 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description="Deep SORT")
     parser.add_argument(
-        "--sequence_dir", help="Path to MOTChallenge sequence directory",
-        default=None, required=True)
+        "--sequence_dir", help="Path to Nvidia sequence directory",
+        default="../data/Nvidia")
     parser.add_argument(
-        "--detection_file", help="Path to custom detections.", default=None,
-        required=True)
+        "--detection_file", help="Path to custom detections.", default="../data/track_features")
     parser.add_argument(
         "--output_dir", help="Path to the tracking output file. This file will"
         " contain the tracking results on completion.",
-        default="./output")
+        default="../data/track_output")
     parser.add_argument(
         "--min_confidence", help="Detection confidence threshold. Disregard "
         "all detections that have a confidence lower than this value.",
