@@ -21,7 +21,7 @@ def mask_to_contours(mask):
     # return a list of contours
     return contours
 
-def main(model_path, input_video, output_dir):
+def main(model_path, input_video, output_dir, REGENERATE):
 
     # Directory to save logs and trained model
     MODEL_DIR = "./logs"
@@ -85,7 +85,10 @@ def main(model_path, input_video, output_dir):
             os.makedirs(save_pkl_dir)
             start_point = 0 # set the start frame for detection
         else:
-            start_point = len(os.listdir(save_pkl_dir))
+            if REGENERATE:
+                start_point = 0
+            else:
+                start_point = len(os.listdir(save_pkl_dir))
         
         # tqdm progress bar
         pbar = tqdm.tqdm(total = vid.get_length()-start_point)
@@ -127,6 +130,7 @@ def parse_args():
     parser.add_argument(
         "--output_dir", help="Path to the detection output file.",
         default="../data/detect_output_pkl/")
+    parser.add_argument("--regenerate", type=bool, default=False)
     return parser.parse_args()            
     
 
@@ -135,4 +139,5 @@ if __name__ == "__main__":
     model_path = args.model_path
     input_video = args.input_video
     output_dir = args.output_dir
-    main(model_path=model_path, input_video=input_video, output_dir=output_dir)
+    regenerate = args.regenerate
+    main(model_path=model_path, input_video=input_video, output_dir=output_dir, REGENERATE=regenerate)
