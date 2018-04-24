@@ -5,6 +5,8 @@ import time
 import cv2
 import math
 import numpy as np
+import multiprocessing
+
 
 def video2frame(video_name, save_path):
     
@@ -48,6 +50,7 @@ def video2frame(video_name, save_path):
 
 
 def main(vedio_dir, save_path):
+    jobs = []
     for v in os.listdir(vedio_dir):
         file_save_path = os.path.join(save_path,v.split('.')[0],'img1')
         if os.path.exists(file_save_path):
@@ -55,8 +58,18 @@ def main(vedio_dir, save_path):
             continue
         else:
             os.makedirs(file_save_path)
-        video2frame(os.path.join(vedio_dir,v),file_save_path)
-
+        jobs.append(multiprocessing.Process(target=video2frame,
+                                            args =(os.path.join(vedio_dir,v),file_save_path)))
+        # video2frame(os.path.join(vedio_dir,v),file_save_path)
+    
+    # start jobs
+    for j in jobs:
+        j.start()
+ 
+    # make sure all jobs have finished
+    for j in jobs:
+        j.join()
+    
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description="Video2Frame")
