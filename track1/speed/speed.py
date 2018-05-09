@@ -244,21 +244,14 @@ def main():
             fids = [pt3d[0] for pt3d in tracklet[track_id]]
             scores = np.expand_dims([pt3d[5] for pt3d in tracklet[track_id]], axis=1)
             bboxs = np.concatenate([np.array(pt3d[1:5]).reshape(1,4) for pt3d in tracklet[track_id]], axis=0)
-            #xy = np.concatenate([np.mean(pt3d[-1], axis=0, keepdims=True) for pt3d in tracklet[track_id]], axis=0)
             xy2d = np.concatenate([np.mean(pt3d[-2], axis=0, keepdims=True) for pt3d in tracklet[track_id]], axis=0)
             # interpolation
             frange = np.arange(min(fids), max(fids)+1)
-            #x = np.interp(frange, fids, xy[:, 0])
-            #y = np.interp(frange, fids, xy[:, 1])
             x2d = np.interp(frange, fids, xy2d[:, 0])
             y2d = np.interp(frange, fids, xy2d[:, 1])
             if frange.shape[0] < 32+11:
                 continue
-            """
-            elif frange.shape[0] >= 11:
-                x, y = smooth(x)[5:-5], smooth(y)[5:-5]
-            """
-            #x, y = smooth(x, window_len=11), smooth(y, window_len=11)
+            
             x2d, y2d = smooth(x2d, window_len=11), smooth(y2d, window_len=11)
             xy2d_smooth = np.concatenate([np.expand_dims(x2d, axis=1), np.expand_dims(y2d, axis=1)], axis=1)
             m = Ms[videoname]
@@ -266,17 +259,7 @@ def main():
             x, y = xy3d_smooth[:, 0], xy3d_smooth[:, 1]
             # miles per hour
             v = (30*3600/1000.)*(np.diff(y)**2 + np.diff(x)**2)**0.5
-            """
-            if v.shape[0] < 31:
-                vlen = v.shape[0]
-                wlen = vlen - vlen%2 - 1
-                if wlen == 3:
-                    hour_smoothv = smooth(v, window_len=wlen)[wlen//2:]
-                else:
-                    hour_smoothv = smooth(v, window_len=wlen)[wlen//2:-1*(wlen//2)+1]
-                mile_smoothv = 0.621371*hour_smoothv
-            else:
-            """
+            
             hour_smoothv = smoothv(v, window_len=31)[15:]
             mile_smoothv = 0.621371*hour_smoothv
             hvout = list(hour_smoothv[np.array(fids)-min(fids)])
@@ -311,15 +294,9 @@ def main():
             bboxs_notrim = np.concatenate([np.array(pt3d[1:5]).reshape(1,4) for pt3d in tracklet_notrim[track_id]], axis=0)
             hvout_notrim = np.expand_dims(hvout, axis=1)
             mvout_notrim = np.expand_dims(mvout, axis=1)
-            #fids_trim = np.expand_dims(np.array([pt3d[0] for pt3d in tracklet[track_id]]), axis=1)
-            #scores_trim = np.expand_dims([pt3d[5] for pt3d in tracklet[track_id]], axis=1)
-            #bboxs_trim = np.concatenate([np.array(pt3d[1:5]).reshape(1,4) for pt3d in tracklet[track_id]], axis=0)
-            #hvout_trim = np.expand_dims(hvout, axis=1)
-            #mvout_trim = np.expand_dims(mvout, axis=1)
+            
             assert fids_notrim.shape[0] == scores_notrim.shape[0] == bboxs_notrim.shape[0] == hvout_notrim.shape[0] == mvout_notrim.shape[0], (fids_notrim.shape, scores_notrim.shape, bboxs_notrim.shape, hvout_notrim.shape, mvout_notrim.shape, len(border_mark), len(hvout), border_mark)
-            #assert fids_trim.shape[0] == scores_trim.shape[0] == bboxs_trim.shape[0] == hvout_trim.shape[0] == mvout_trim.shape[0], (fids_trim.shape, scores_trim.shape, bboxs_trim.shape, hvout_trim.shape, mvout_trim.shape, len(border_mark), len(hvout), border_mark)
             speed[track_id] = np.concatenate([fids_notrim, scores_notrim, bboxs_notrim, hvout_notrim, mvout_notrim], axis=1)
-            #speed[track_id] = np.concatenate([fids_trim, scores_trim, bboxs_trim, hvout_trim, mvout_trim], axis=1)
 
         speed_list = list()
         for track_id in speed:
@@ -340,59 +317,30 @@ def main():
                 out = [video_id, fid+1, tid, xmin, ymin, xmax, ymax, mv, score]
                 string = " ".join([str(round(x, 4)) for x in out])+"\n"
                 f.write(string)
-            
-        # generate speed video
-        # read video
-        """
-        video_file = os.path.join(video_dir, videoname)
-        vid = imageio.get_reader(video_file,  'ffmpeg')
-        # write video
-        fps = vid.get_meta_data()['fps']
-        writer = imageio.get_writer(os.path.join(save_dir, videoname.replace('.mp4', '_speed.mp4')), fps=fps)
-        # detect_files
-        pkl_files = sorted(os.listdir(os.path.join(detect_dir, videoname)))
-        fnum = 0
-        frame = vid.get_data(fnum)
-        for line in tqdm(speed_list):
-            fid, tid, y1, x1, y2, x2, hv, mv, score = line
-            if fid > fnum:
-                cv2.putText(frame, str(fnum+1), (100,100), cv2.FONT_HERSHEY_SIMPLEX, 0.75, 255, 2)
-                writer.append_data(frame)
-                #if len(pts) > 0:
-                    #track_ids = np.concatenate(track_ids, axis=0)
-                    #pts = np.concatenate(pts, axis=0)
-                    #savefig(pts, track_ids, os.path.join(save3d_dir, videoname), fid)
-                # read new data
-                frame = vid.get_data(fid)
-                r = pickle.load(open(os.path.join(detect_dir, videoname, pkl_files[fid]), "rb"))
-                if videoname.startswith("Loc1_1"):
-                    r = r[1]
-                fnum = fid
-                #pts = []
-                track_ids = []
 
-            # read mask roi
-            boxes, masks = r['rois'], r['contours']
-            index = np.where((r['rois'] == np.array([y1, x1, y2, x2])).all(axis=1))[0]
-            if index.shape[0] == 1:
-                index = index[0]
-                c = r['contours'][index]
-                bc = extract_bottom(c)
-            else:
-                c = None
-                bc = None
-                continue
-            #coord2dto3d(m, pts)
-            color = [0, 255, 0]
-            cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 1)
-            cv2.putText(frame, str(tid)+','+str(round(hv,2))+','+str(round(mv,2)), (int(x1),int(y1)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, 255, 2)
-            cv2.drawContours(frame, bc, -1, (255,0,0), 1)
-
-        writer.close()
-        """
-        
+    # generate the final output file
+    # savetxt_dir = "../../aic2018/track1/speed_txt"
+	speed_txtfiles = sorted([x for x in os.listdir(savetxt_dir) if (x.startswith('Loc'))])
+	cnt_dict = dict()
+	outlier = []
+	factor = 1.0
+	with open(os.path.join(savetxt_dir, 'track1.txt'), 'w+') as f:
+	    for txt in speed_txtfiles:
+	        cnt = 0
+	        with open(os.path.join(savetxt_dir, txt), 'r') as ftxt:
+	            for line in ftxt:
+	                vid, fid, tid, xmin, ymin, xmax, ymax, mv, score = line.split(' ')
+	                tid = str(-1)
+	                mv = str(float(mv) * factor)
+	                out = [vid, fid, tid, xmin, ymin, xmax, ymax, mv, score]
+	                string = ' '.join(out)
+	                f.write(string)
+	                cnt += 1
+	            print(txt, cnt)
+	            cnt_dict[txt] = cnt
 
         
 if __name__ == '__main__':
     main()
+
     

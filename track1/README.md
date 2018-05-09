@@ -10,13 +10,14 @@ To install all dependency packages, execute `$ pip install -r requirements.txt `
 - imageio
 - h5py
 - scikit-learn
+- Scikit-video
 - scipy
 - matplotlib
 
 ## Models & Data
 
-- Download pretrained models from [here](). Upzip "track1_model.zip" and put it under "./model/".
-- Download detection output data from [here](). It contains all detection output files provided by Mask-RCNN. Upzip "track1_data.zip" and put it under "./data/".
+- Download pretrained models and from detection output data [here](https://drive.google.com/open?id=1RH3nObVsXTynVU2Gd3erD_cd9TJ1qYWs). It contains all detection output files provided by Mask-RCNN.
+- Upzip "model.zip" and "data.zip".
 
 ## Steps
 
