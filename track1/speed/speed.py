@@ -125,10 +125,10 @@ def main():
                    'teddy bear', 'hair drier', 'toothbrush']
 
     # video directory
-    video_dir = "../../aic2018/track1/track1_videos/"
+    video_dir = "../data/track1_videos/"
     detect_dir = "../data/detect_output/"
     track_dir = "../data/track_output/"
-    save_dir = "../../output/speed_videos"
+    save_dir = "../output/speed_videos"
     savetxt_dir = "../output/speed_txt"
     mat_file = "./track1_M.mat"
     if not os.path.isdir(save_dir):
@@ -320,24 +320,24 @@ def main():
 
     # generate the final output file
     # savetxt_dir = "../../aic2018/track1/speed_txt"
-	speed_txtfiles = sorted([x for x in os.listdir(savetxt_dir) if (x.startswith('Loc'))])
-	cnt_dict = dict()
-	outlier = []
-	factor = 1.0
-	with open(os.path.join(savetxt_dir, 'track1.txt'), 'w+') as f:
-	    for txt in speed_txtfiles:
-	        cnt = 0
-	        with open(os.path.join(savetxt_dir, txt), 'r') as ftxt:
-	            for line in ftxt:
-	                vid, fid, tid, xmin, ymin, xmax, ymax, mv, score = line.split(' ')
-	                tid = str(-1)
-	                mv = str(float(mv) * factor)
-	                out = [vid, fid, tid, xmin, ymin, xmax, ymax, mv, score]
-	                string = ' '.join(out)
-	                f.write(string)
-	                cnt += 1
-	            print(txt, cnt)
-	            cnt_dict[txt] = cnt
+    speed_txtfiles = sorted([x for x in os.listdir(savetxt_dir) if (x.startswith('Loc'))])
+    cnt_dict = dict()
+    outlier = []
+    factor = 1.0
+    with open(os.path.join(savetxt_dir, 'track1.txt'), 'w+') as f:
+        for txt in speed_txtfiles:
+            cnt = 0
+            with open(os.path.join(savetxt_dir, txt), 'r') as ftxt:
+                for line in ftxt:
+                    vid, fid, tid, xmin, ymin, xmax, ymax, mv, score = line.split(' ')
+                    tid = str(-1)
+                    mv = str(float(mv) * factor)
+                    out = [vid, fid, tid, xmin, ymin, xmax, ymax, mv, score]
+                    string = ' '.join(out)
+                    f.write(string)
+                    cnt += 1
+                print(txt, cnt)
+                cnt_dict[txt] = cnt
 
         
 if __name__ == '__main__':
