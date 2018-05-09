@@ -171,7 +171,7 @@ def main():
             Ms[videos[i][1]] = m
             
     # generate tracklet
-    videonames = [x for x in os.listdir(video_dir) if x.startswith("Loc2")]
+    videonames = [x for x in os.listdir(video_dir) if x.startswith("Loc")]
     for videoname in videonames:
         print(videoname)
         print("Processing video {}...".format(videoname))
