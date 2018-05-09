@@ -50,4 +50,4 @@ To install all dependency packages, execute `$ pip install -r requirements.txt `
 ### Speed
 
 1. Go to "./speed" directory.
-2. Run "speed.py" to implement speed estimation from tracking trajectories. The final output "track1.txt" will be saved in "../output/track1.txt".
+2. Run "speed.py" to implement speed estimation from tracking trajectories. The final output "track1.txt" will be saved in "../output/speed_txt/track1.txt".
