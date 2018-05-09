@@ -126,7 +126,7 @@ def main():
 
     # video directory
     video_dir = "../data/track1_videos/"
-    detect_dir = "../data/detect_output/"
+    detect_dir = "../data/detect_output_pkl/"
     track_dir = "../data/track_output/"
     save_dir = "../output/speed_videos"
     savetxt_dir = "../output/speed_txt"
