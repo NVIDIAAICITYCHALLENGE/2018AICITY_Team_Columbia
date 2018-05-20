@@ -51,3 +51,10 @@ To install all dependency packages, execute `$ pip install -r requirements.txt `
 
 1. Go to "./speed" directory.
 2. Run "speed.py" to implement speed estimation from tracking trajectories. The final output "track1.txt" will be saved in "../output/speed_txt/track1.txt".
+
+## Reference
+
+1. He, Kaiming, et al. "Mask r-cnn." *Computer Vision (ICCV), 2017 IEEE International Conference on*. IEEE, 2017.
+2. Wojke, Nicolai, Alex Bewley, and Dietrich Paulus. "Simple online and realtime tracking with a deep association metric." *arXiv preprint arXiv:1703.07402* (2017).
+3. https://github.com/matterport/Mask_RCNN
+4. https://github.com/nwojke/deep_sort
